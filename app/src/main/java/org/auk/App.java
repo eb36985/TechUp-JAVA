@@ -1,15 +1,19 @@
 package org.auk;
 
-import javafx.application.Application;
+/*import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.auk.data.StudentRepository;
+import javafx.stage.Stage;*/
+import org.auk.data.*;
+import org.auk.models.Course;
+import org.auk.models.Review;
 import org.auk.models.Student;
+import org.auk.models.StudentProfile;
 import org.auk.utils.ConsoleColors;
 import org.auk.utils.DbUtil;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,7 +34,7 @@ import static org.auk.utils.Logger.log;
  *
  * @link Extra JavaFX GUI components http://www.jfoenix.com
  */
-public class App extends Application {
+public class App {
     private final static String DB_URL = "jdbc:mariadb://localhost/techupdb?useSSL=false";
     private final static int X_TIMES = 65;
 
@@ -51,28 +55,103 @@ public class App extends Application {
     @PersistenceContext
     static EntityManager entityManager;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {/*
         SessionFactory sessionFactory = DbUtil.getSessionFactory();
         EntityManager em = sessionFactory.createEntityManager();
         em.getTransaction().begin();
-        log().info("Transaction Begin");
+        log().info("Transaction Begin");*/
 
-        Student student = new Student();
-        student.setFirstName("Idriz");
-        student.setLastName("Seferi");
-        student.setEmail("sefa@legends.com");
-        student.setBirthday(new Date());
-        em.persist(student);
+//        Student student = new Student();
+//        student.setFirstName("Arian");
+//        student.setLastName("Xhezairi");
+//        student.setEmail("arian@legends.com");
+//        student.setBirthday(new Date());
+//        //em.persist(student);
+//        StudentProfile studentProfile = new StudentProfile();
+//        studentProfile.setAddress("st.prishtine 3423");
+//        studentProfile.setBirthplace("Kosovo");
+//        studentProfile.setStudent(student);
+//      //  em.persist(studentProfile);
 //        StudentDao studentDao = new StudentDao();
 //        studentDao.save(student);
 
-        List<Student> studentList = em.createQuery("from Student ", Student.class).getResultList();
-        for (Student std : studentList) {
-            print(std.getFullName());
-        }
+//        List<Student> studentList = em.createQuery("from Student ", Student.class).getResultList();
+//        for (Student std : studentDao.getAll()) {
+//            print(std.getFullName());
+//        }
 
-        em.getTransaction().commit();
-        log().info("Transaction Commit");
+        //<=============  add a  profile to a Student  (OneToOne) =================>
+  /*      StudentDao studentDao = new StudentDao();
+        for (Student std : studentDao.getAll()) {
+           if(std.getFirstName().equalsIgnoreCase("Arian")
+           && std.getLastName().equalsIgnoreCase("Xhezairi")){
+               Student student1 = std;
+               StudentProfile studentProfile1 = new StudentProfile();
+               studentProfile1.setAddress("st.prishtine 10000");
+               studentProfile1.setBirthplace("Prizren");
+               studentProfile1.setStudent(student1);
+               StudentProfileDao studentProfileDao = new StudentProfileDao();
+               studentProfileDao.save(studentProfile1);
+           }else {
+               System.out.println("Student does not exist");
+           }
+        }*/
+
+
+
+         //<============     (OneToMany  add some reviws to a Course    ============>
+     /*   Course course = new Course();
+        course.setTitle("Hibernate");
+        course.setDescription("learn ORM");
+        course.setStartDate(new Date());
+        course.setEndDate(new Date());
+        CourseDao courseDao = new CourseDao();
+        Review review1 = new Review();
+        review1.setComment("best Course ever");
+        course.addReview(review1);
+        review1.setCourse(course);
+        Review review2 = new Review();
+        review2.setComment("Thought was better");
+        course.addReview(review2);
+        review2.setCourse(course);
+        System.out.println("---------- before Course ------------");
+        courseDao.save(course);
+        ReviewDao reviewDao = new ReviewDao();
+        System.out.println("---------- before Review1 ------------");
+        reviewDao.save(review1);
+        System.out.println("---------- after Review1 ------------");
+        reviewDao.save(review2);*/
+
+
+     // <=============  get reviews of a course ==============>
+
+//        CourseDao courseDao = new CourseDao();
+//        for (Course course:courseDao.getAll()) {
+//                if(course.getReviewList() !=null){
+//                    for (Review review:course.getReviewList()) {
+//                        System.out.println(review);
+//                    }
+//                }
+//
+//        }
+ //    <========================================================>
+
+
+
+     // <=============== add a course to a student  ( MantyToMany)=================>
+        CourseDao courseDao = new CourseDao();
+        StudentDao studentDao = new StudentDao();
+        Course course = courseDao.getById(12);
+       Student student = studentDao.getById(4);
+
+       student.addCourse(course);
+       studentDao.update(student);
+
+
+
+
+//        em.getTransaction().commit();
+//        log().info("Transaction Commit");
 
         // Pure JDBC - no ORM
 //        try (var ignore = getConnection()) {
@@ -111,7 +190,7 @@ public class App extends Application {
      *
      * @link https://www.baeldung.com/java-initialize-hashmap
      */
-    private static Connection getConnection() throws SQLException {
+   /* private static Connection getConnection() throws SQLException {
         if (connection != null) {
             return connection;
         }
@@ -132,16 +211,16 @@ public class App extends Application {
 //        props.putAll(propMap);
 
         return connection = DriverManager.getConnection(DB_URL, props);
-    }
+    }*/
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/layout_main.fxml"));
-        Scene scene = new Scene(root, 300, 275);
-        primaryStage.setTitle("Hello TechUp!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+//    @Override
+//    public void start(Stage primaryStage) throws Exception {
+//        Parent root = FXMLLoader.load(getClass().getResource("/fxml/layout_main.fxml"));
+//        Scene scene = new Scene(root, 300, 275);
+//        primaryStage.setTitle("Hello TechUp!");
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+//    }
 
     private static void launchCLI(String... args) {
         print(ConsoleColors.PURPLE_BACKGROUND_BRIGHT + ConsoleColors.BLACK_BOLD + " ~ Welcome to Student Management System 2020 ~ " + ConsoleColors.RESET);
@@ -160,10 +239,10 @@ public class App extends Application {
             print("Do you want to create another student record? Y/n:");
             Scanner sc = new Scanner(System.in);
             char answer = sc.next().charAt(0);
-
-            switch (answer) {
-                case 'N', 'n' -> receiving = false;
-            }
+//
+//            switch (answer) {
+//                case 'N', 'n' -> receiving = false;
+//            }
         }
 
         print(ConsoleColors.RED_BOLD + "Thank you for your service, and see you soon again! ^_^" + ConsoleColors.RESET);

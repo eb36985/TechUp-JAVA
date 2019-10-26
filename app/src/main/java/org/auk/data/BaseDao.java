@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface BaseDao<T> {
 
+    T getById(int id);
+
     void save(T t);
 
     void update(T t);

@@ -57,7 +57,7 @@ public class Faker {
 
             Calendar dateOfBirth = Calendar.getInstance();
             dateOfBirth.add(Calendar.DAY_OF_MONTH, -((18 * 365) + random.nextInt(60 * 365)));
-            student.setDob(dateOfBirth.getTime());
+//            student.setDob(dateOfBirth.getTime());
 
             students.add(student);
         }
@@ -122,7 +122,7 @@ public class Faker {
                 SimpleDateFormat simpleDateFormat =
                         new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date dob = simpleDateFormat.parse(values[3]);
-                student.setDob(dob);
+//                student.setDob(dob);
 
                 studentList.add(student);
             }

@@ -11,17 +11,51 @@ import java.util.List;
 
 public class StudentDao implements BaseDao<Student> {
 
-    public void save(Student student) {
-        Transaction transaction = null;
-
+    private  Session session = null;
+    @Override
+    public Student getById(int id) {
+        Student student = null;
         try (var sessionFactory = DbUtil.getSessionFactory()) {
-            Session session = sessionFactory.getCurrentSession();
-            transaction = session.beginTransaction();
-            session.save(student);
-            transaction.commit();
+            session=  sessionFactory.getCurrentSession();
+            session.getTransaction().begin();
+            student =  session.find(Student.class,id);
+            session.getTransaction().commit();
         } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+
+            e.getStackTrace();
+        }
+        return student;
+    }
+
+    public void save(Student student) {
+        try (var sessionFactory = DbUtil.getSessionFactory()) {
+             session = sessionFactory.getCurrentSession();
+            session.getTransaction().begin();
+            session.save(student);
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+
+            e.getStackTrace();
+        }
+    }
+
+
+    @Override
+    public void update(Student student) {
+        try (var sessionFactory = DbUtil.getSessionFactory()) {
+            session = sessionFactory.getCurrentSession();
+            session.getTransaction().begin();
+            session.update(student);
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
             }
 
             e.getStackTrace();
@@ -29,23 +63,28 @@ public class StudentDao implements BaseDao<Student> {
     }
 
     @Override
-    public void update(Student student) {
-
-    }
-
-    @Override
     public void delete(Student student) {
+        Transaction transaction = null;
+
+        try (var session = DbUtil.getSessionFactory().getCurrentSession()) {
+            transaction = session.beginTransaction();
+         session.delete(student);
+            transaction.commit();
+        } catch (HibernateException e) {
+
+            e.printStackTrace();
+        }
 
     }
 
     public List<Student> getAll() {
         List<Student> studentList = new ArrayList<>();
-        Transaction transaction = null;
+
 
         try (var session = DbUtil.getSessionFactory().getCurrentSession()) {
-            transaction = session.beginTransaction();
+            session.getTransaction().begin();
             studentList = session.createQuery("from Student", Student.class).getResultList();
-            transaction.commit();
+            session.getTransaction().commit();
         } catch (HibernateException e) {
 
             e.printStackTrace();
